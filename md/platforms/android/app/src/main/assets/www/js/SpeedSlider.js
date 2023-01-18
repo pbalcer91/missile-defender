@@ -24,8 +24,8 @@ class SpeedSlider extends GameObject {
     }
 
     changeValue(newPositionY) {
-        if (newPositionY >= this.lowestPosition) {
-            this.centerY = this.lowestPosition;
+        if (newPositionY >= this.lowestPosition - this.indicatorHeight) {
+            this.centerY = this.lowestPosition - this.indicatorHeight;
             this.value = 0;
             return;
         }

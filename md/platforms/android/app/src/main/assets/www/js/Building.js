@@ -1,8 +1,3 @@
-const BIG_BUILDING = [120, 40];
-const MEDIUM_BUILDING = [60, 40];
-const SMALL_BUILDING = [30, 40];
-const NO_BUILDING = [0, 0];
-
 class Building extends GameObject {
     constructor(miliseconds) {
         super(miliseconds);
@@ -23,28 +18,30 @@ class Building extends GameObject {
     }
 
     randomizeSize() {
-        let sizeArray = [BIG_BUILDING, MEDIUM_BUILDING, SMALL_BUILDING, NO_BUILDING]
+        let sizeArray = [[canvas.height / 2, canvas.height / 2 * 0.62],
+                        [canvas.height / 3, canvas.height / 2 * 0.62],
+                        [canvas.height / 4, canvas.height / 2 * 0.62],
+                        [0, 0]]
 
         return sizeArray[Math.floor(Math.random() * sizeArray.length)];
     }
 
     render() {
-        ctx.fillStyle = "black";
-        ctx.fillRect(this.positionX - this.width / 2, this.positionY - this.height / 2,
-                        this.width, this.height);
+        ctx.drawImage(buildingImage, this.positionX - this.width / 2, this.positionY - this.height / 2,
+                this.width, this.height);
     }
 
     pointIsInsideBoundingRectangle(pointX, pointY) {
-        if (pointX < this.positionX)
+        if (pointX < this.positionX - this.width / 2)
             return false;
 
-        if (pointX > this.positionX + this.width)
+        if (pointX > this.positionX + this.width / 2)
             return false;
 
-        if (pointY < this.positionY)
+        if (pointY < this.positionY - this.height / 2)
             return false;
 
-        if (pointY > this.positionY + this.height)
+        if (pointY > this.positionY + this.height / 2)
             return false;
         
         return true;

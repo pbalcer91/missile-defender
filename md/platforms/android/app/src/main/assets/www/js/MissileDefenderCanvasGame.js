@@ -29,14 +29,19 @@ class MissileDefenderCanvasGame extends CanvasGame {
             if (!isPlaying)
                 return;
 
-            buildings.push(new Building(backgroundRefreshRate));
-            buildings.at(-1).start();
+            if (buildings.length == 0) {
+                buildings.push(new Building(backgroundRefreshRate));
+                buildings.at(-1).start();
+            }
 
-            let intervalArray = [5000, 7000, 3000, 10000, 12000]
+            if (buildings.length > 0
+                && buildings.at(-1).positionX < canvas.width - buildings.at(-1).width * 1.5
+                && Math.random() < 0.4) {
+                buildings.push(new Building(backgroundRefreshRate));
+                buildings.at(-1).start();
+            }
 
-            let interval = intervalArray[Math.floor(Math.random() * intervalArray.length)];
-
-            this.createBuilding(interval);
+            this.createBuilding(timeout);
         }, timeout)
     }
 
@@ -45,10 +50,15 @@ class MissileDefenderCanvasGame extends CanvasGame {
 
         buildings.forEach(building => {
             building.render();
-        })
+        });
+
         enemies.forEach(enemy => {
             enemy.render();
-        })
+        });
+
+        bonuses.forEach(bonus => {
+            bonus.render();
+        });
 
         if (player != null)
             player.render();
@@ -80,10 +90,26 @@ class MissileDefenderCanvasGame extends CanvasGame {
             }
         })
 
+        bonuses.forEach(bonus => {
+            if (player != null && player.collisionWithObject(bonus)) {
+                bonuses = arrayRemove(bonuses, bonus);
+                if (player.hitPoints < 5) {
+                    player.hitPoints++;
+                    infoPanel.recoverHealth();
+                }
+                else {
+                    this.score++;
+                    infoPanel.addScore(1);
+                }
+            }
+        })
+
         enemies.forEach(enemy => {
             enemies.forEach(otherEnemy => {
                 if (enemy.collisionWithObject(otherEnemy)
                     && enemy != otherEnemy) {
+                    enemy.stop();
+                    otherEnemy.stop();
                     enemies = arrayRemove(enemies, enemy);
                     enemies = arrayRemove(enemies, otherEnemy);
 
@@ -93,6 +119,7 @@ class MissileDefenderCanvasGame extends CanvasGame {
             })
 
             if (player != null && player.collisionWithObject(enemy)) {
+                enemy.stop();
                 enemies = arrayRemove(enemies, enemy);
 
                 this.score++;
@@ -108,23 +135,32 @@ class MissileDefenderCanvasGame extends CanvasGame {
             }
 
             buildings.forEach(building => {
-                if (enemy.collisionWithObject(building))
-                        enemies = arrayRemove(enemies, enemy);
+                if (enemy.collisionWithObject(building)) {
+                    enemy.stop();
+                    enemies = arrayRemove(enemies, enemy);
+                }
             })
 
             if (player != null) {
                 player.missiles.forEach(missile => {
                     if (enemy.collisionWithObject(missile)) {
+                        bonuses.push(new Bonus(enemy.positionX, enemy.positionY));
+                        bonuses.at(-1).start();
+                        enemy.stop();
                         enemies = arrayRemove(enemies, enemy);
+                        missile.stop();
                         player.missiles = arrayRemove(player.missiles, missile);
                         this.score++;
                         infoPanel.addScore(1);
+                        
                     }
                 })
             }
 
             enemy.missiles.forEach(missile => {
                 if (player != null && player.collisionWithObject(missile)) {
+                    //hitSound.play();
+                    missile.stop();
                     enemy.missiles = arrayRemove(enemy.missiles, missile);
 
                     player.hitPoints--;

@@ -21,7 +21,23 @@ class Enemy extends Plane {
         this.speed = 3
         this.range = 300;
 
+        this.reloadTime = 3;
+        this.seriesCount = 2;
+
+        this.targetLockRadius = 4;
+
         this.direction = -1;
+
+        this.defaultLeft = enemyDefaultLeft;
+        this.defaltRight = enemyDefaultRight;
+        this.upLeft = enemyUpLeft;
+        this.upRight = enemyUpRight
+        this.downLeft = enemyDownLeft
+        this.downRight = enemyDownRight
+
+        this.image = (this.positionX < 0 ?
+                        this.defaltRight
+                        : this.defaultLeft);
     }
     
     randomizePosition() {
@@ -39,57 +55,45 @@ class Enemy extends Plane {
                 this.positionY = Math.random() * (canvas.height / 2 - 100) + 100;
                 return;
         }
-
     }
 
-    move() {
-        this.xShift = Math.cos(Math.radians(this.rotation));
-        this.yShift = -Math.sin(Math.radians(this.rotation));
+    changeDirectionByPlayer() {
+        if ((this.yShift == 1 || this.yShift == -1)
+            && this.isOnShootingLine(player)) {
+                this.rotate(NO_ROTATION);
+                return false;
+        }
 
-        this.positionX += this.xShift / (6 - this.speed);
-        this.positionY += this.yShift / (6 - this.speed);
-    }
+        if (this.yShift == 1 && player.positionX > this.positionX
+            || this.yShift == -1 && player.positionX < this.positionX) {    
+            this.rotate(COUNTER_CLOCKWISE);
+            return true;
+        }
 
-    rotate() {
-        let result = this.rotation;
+        if (this.yShift == 1 && player.positionX < this.positionX
+            || this.yShift == -1 && player.positionX > this.positionX) {
+            this.rotate(CLOCKWISE);
+            return true;
+        }
 
-        enemies.forEach(enemy => {
-            if (this != enemy && this.isOnCollisionWay(enemy)) {
-                this.rotation -= this.manoeuvrability;
-                return;
-            }
-        });
-
-        this.direction = (this.isAboveShootingLine(player, 2)?
+        this.direction = (this.isAboveShootingLine(player)?
                             DIRECTION_TOO_LOW
-                            : this.isBelowShootingLine(player, 2) ?
+                            : this.isBelowShootingLine(player) ?
                                 DIRECTION_TOO_HIGH
                                 : DIRECTION_OK);
-
-        if (this.yShift > 0.8 && player.positionX > this.positionX
-            || this.yShift < -0.8 && player.positionX < this.positionX) {
-                
-            this.rotation += this.manoeuvrability;
-            return;
-        }
-
-        if (this.yShift > 0.8 && player.positionX < this.positionX
-            || this.yShift < -0.8 && player.positionX > this.positionX) {
-            this.rotation -= this.manoeuvrability;
-            return;
-        }
 
         // direction = right, player is on right
         if (this.xShift > 0 && player.positionX > this.positionX) {
             switch (this.direction) {
                 case DIRECTION_OK:
-                    return;
+                    this.rotate(NO_ROTATION);
+                    return false;
                 case DIRECTION_TOO_HIGH:
-                    result -= this.manoeuvrability;
-                    break;
+                    this.rotate(CLOCKWISE);
+                    return true;
                 case DIRECTION_TOO_LOW:
-                    result += this.manoeuvrability;
-                    break;
+                    this.rotate(COUNTER_CLOCKWISE);
+                    return true;
             }
         }
 
@@ -97,37 +101,69 @@ class Enemy extends Plane {
         if (this.xShift < 0 && player.positionX < this.positionX) {
             switch (this.direction) {
                 case DIRECTION_OK:
-                    return;
+                    this.rotate(NO_ROTATION);
+                    return false;
                 case DIRECTION_TOO_HIGH:
-                    result += this.manoeuvrability;
-                    break;
+                    this.rotate(COUNTER_CLOCKWISE);
+                    return true;
                 case DIRECTION_TOO_LOW:
-                    result -= this.manoeuvrability;
-                    break;
+                    this.rotate(CLOCKWISE);
+                    return true;
             }
         }
 
         // direction = left, player is on right
-        if (this.xShift < 0 && player.positionX > this.positionX) {
-            result = (this.yShift > 0 ?
-                            this.rotation + this.manoeuvrability
-                            : this.rotation - this.manoeuvrability)
+        if (this.xShift < 0 && player.positionX >= this.positionX) {
+
+            if (this.positionY > canvas.height / 2) {
+                this.rotate(CLOCKWISE);
+                return true;
+            }
+
+            this.rotate(COUNTER_CLOCKWISE);
+            return true;
         }
 
         // direction = right, player is on left
-        if (this.xShift > 0 && player.positionX < this.positionX) {
-            result = (this.yShift > 0 ?
-                            this.rotation - this.manoeuvrability
-                            : this.rotation + this.manoeuvrability)
+        if (this.xShift > 0 && player.positionX <= this.positionX) {
+            
+            if (this.positionY > canvas.height / 2) {
+                this.rotate(COUNTER_CLOCKWISE);
+                return true;
+            }
+
+            this.rotate(CLOCKWISE);
+            return true;
         }
 
-        if (result > FULL_ANGLE)
-            result -= FULL_ANGLE;
+        switch(this.direction) {
+            case DIRECTION_OK:
+                this.rotate(NO_ROTATION)
+                return false;
+            case DIRECTION_TOO_LOW:
+                this.rotate(this.rotation <= 90 || this.rotation >= 270 ?
+                                COUNTER_CLOCKWISE
+                                : CLOCKWISE)
+                return true;
+            case DIRECTION_TOO_HIGH:
+                this.rotate(this.rotation <= 90 || this.rotation >= 270 ?
+                                CLOCKWISE
+                                : COUNTER_CLOCKWISE)
+                return true;
+        }
+    }
 
-        if (result < 0)
-            result += FULL_ANGLE;
+    changeDirectionByOtherEnemies() {
+        enemies.forEach(enemy => {
+            if (this != enemy && this.isOnCollisionWay(enemy)) {
+                this.rotation -= this.manoeuvrability;
+                return;
+            }
+        });
+    }
 
-        this.rotation = result;
+    changeDirectionByBuildings() {
+
     }
 
     isInRange(object, range) {
@@ -140,30 +176,30 @@ class Enemy extends Plane {
         return false;
     }
 
-    isOnShootingLine(object, margin) {
-        return (!this.isBelowShootingLine(object, margin)
-                && !this.isAboveShootingLine(object, margin))
+    isOnShootingLine(object) {
+        return (!this.isBelowShootingLine(object)
+                && !this.isAboveShootingLine(object))
     }
 
-    isBelowShootingLine(object, margin) {
+    isBelowShootingLine(object) {
         let a = Math.tan(Math.radians(this.rotation));
         let b = -this.positionY - a * this.positionX;
 
-        return (-object.positionY < a * object.positionX + b - margin);
+        return (-object.positionY < a * object.positionX + b - this.targetLockRadius);
     }
 
-    isAboveShootingLine(object, margin) {
+    isAboveShootingLine(object) {
         let a = Math.tan(Math.radians(this.rotation));
         let b = -this.positionY - a * this.positionX;
 
-        return (-object.positionY > a * object.positionX + b + margin);
+        return (-object.positionY > a * object.positionX + b + this.targetLockRadius);
     }
 
     otherEnemyOnShootingLine() {
         enemies.forEach(enemy => {
             if (this != enemy
                 && this.isInRange(enemy, this.range)
-                && this.isOnShootingLine(enemy, 8))
+                && this.isOnShootingLine(enemy))
                     return true;
         })
 
@@ -171,11 +207,9 @@ class Enemy extends Plane {
     }
 
     isOnCollisionWay(object) {
-        if (this.isOnShootingLine(object, 5)
-            && this.isInRange(object, this.range / 2)) {
-                console.log("COLISSION")
+        if (this.isOnShootingLine(object)
+            && this.isInRange(object, this.range / 2))
             return true;
-            }
 
         return false;
     }
@@ -190,27 +224,7 @@ class Enemy extends Plane {
             this.fireMissile();
         }
 
-        this.rotate();
+        this.changeDirectionByPlayer();
         this.move();
-    }
-
-    render() {
-        ctx.save();
-        ctx.translate(this.positionX, this.positionY);
-        ctx.rotate(Math.radians(-this.rotation));
-        ctx.translate(-this.positionX, -this.positionY);
-
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.positionX - this.width / 2, this.positionY - this.height / 2,
-                        this.width, this.height);
-
-        ctx.restore();
-
-        this.missiles.forEach(missile => {
-            if (missile.isDestroyed == true)
-                this.missiles = arrayRemove(this.missiles, missile);
-
-            missile.render();
-        })
     }
 }

@@ -2,13 +2,13 @@ class Missile extends GameObject {
     constructor(positionX, positionY, rotation) {
         super();
         
-        this.height = 2;
-        this.width = 10;
+        this.height = 1;
+        this.width = 8;
         this.positionX = positionX;
         this.positionY = positionY;
         this.rotation = rotation;
 
-        this.speed = 2;
+        this.speed = 4;
 
         this.range = 200;
         this.rangeCounter = 0;
@@ -32,6 +32,22 @@ class Missile extends GameObject {
         this.positionY += yShift;
     }
 
+    pointIsInsideBoundingRectangle(pointX, pointY) {
+        if (pointX < this.positionX - this.width / 2)
+            return false;
+
+        if (pointX > this.positionX + this.width / 2)
+            return false;
+
+        if (pointY < this.positionY - this.height / 2)
+            return false;
+
+        if (pointY > this.positionY + this.height / 2)
+            return false;
+        
+        return true;
+    }
+
     render() {
         if (!isPlaying)
             return;
@@ -41,11 +57,8 @@ class Missile extends GameObject {
         ctx.rotate(Math.radians(-this.rotation));
         ctx.translate(-this.positionX, -this.positionY);
 
-        //ctx.drawImage(missile, this.positionX, this.positionY, this.width, this.height);
-
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.positionX - this.width / 2, this.positionY - this.height / 2,
-                        this.width, this.height);
+        ctx.drawImage(bulletImage, this.positionX - this.width / 2, this.positionY - this.height / 2,
+                this.width, this.height);
 
         ctx.restore();
     }

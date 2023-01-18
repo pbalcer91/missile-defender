@@ -21,7 +21,7 @@ class Menu extends GameObject {
 
         this.startButton = new Button(this.positionY - logoHeight / 2, "START");
         this.scoreButton = new Button(this.positionY, "SCORES");
-        this.quitButton = new Button(this.positionY + logoHeight / 2, "QUIT");
+        //this.quitButton = new Button(this.positionY + logoHeight / 2, "QUIT");
 
         window.addEventListener("touchstart", (event) => {
             let clientX = event.touches[0].clientX;
@@ -38,10 +38,10 @@ class Menu extends GameObject {
                 this.scoreButton.isClicked = true;
                 return;
             }
-            if (this.quitButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.quitButton.isClicked = true;
-                return;
-            }
+            // if (this.quitButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            //     this.quitButton.isClicked = true;
+            //     return;
+            // }
         });
 
         window.addEventListener("touchmove", (event) => {
@@ -61,11 +61,11 @@ class Menu extends GameObject {
                 this.scoreButton.isClicked = false;
                 return;
             }
-            if (this.quitButton.isClicked
-                && !this.quitButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.quitButton.isClicked = false;
-                return;
-            }
+            // if (this.quitButton.isClicked
+            //     && !this.quitButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            //     this.quitButton.isClicked = false;
+            //     return;
+            // }
         });
 
         window.addEventListener("touchend", () => {
@@ -81,10 +81,10 @@ class Menu extends GameObject {
                 this.scoreButton.isClicked = false;
                 return;
             }
-            if (this.quitButton.isClicked) {
-                this.quitButton.isClicked = false;
-                return;
-            }
+            // if (this.quitButton.isClicked) {
+            //     this.quitButton.isClicked = false;
+            //     return;
+            // }
         });
     }
 
@@ -97,6 +97,6 @@ class Menu extends GameObject {
         this.authorLabel.render();
         this.startButton.render();
         this.scoreButton.render();
-        this.quitButton.render();
+        //this.quitButton.render();
     }
 }
