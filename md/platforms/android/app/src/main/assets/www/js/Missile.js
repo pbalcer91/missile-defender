@@ -33,6 +33,9 @@ class Missile extends GameObject {
     }
 
     render() {
+        if (!isPlaying)
+            return;
+
         ctx.save();
         ctx.translate(this.positionX, this.positionY);
         ctx.rotate(Math.radians(-this.rotation));

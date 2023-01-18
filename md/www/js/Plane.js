@@ -9,7 +9,7 @@ const COUNTER_CLOCKWISE = 1;
 const FULL_ANGLE = 359;
 
 class Plane extends GameObject {
-    constructor() {
+    constructor(positionX, positionY) {
         super();
 
         this.hitPoints = 5;
@@ -17,17 +17,32 @@ class Plane extends GameObject {
         this.isReloading = false;
         this.reloadTime = 2;
 
-        this.height = 10;
-        this.width = 30;
-        this.positionX = canvas.width / 2;
-        this.positionY = canvas.height / 2;
+        this.height = 50;
+        this.width = 50;
+        this.positionX = positionX;
+        this.positionY = positionY;
 
         this.shiftVector = [0, 0];
         this.rotation = 0;
-        this.manoeuvrability = 3
+        this.manoeuvrability = 0.5
         this.speed = 4;
 
+        this.minSpeed = 2;
+        this.maxSpeed = 5;
+
+        this.direction = LEFT;
+
         this.missiles = [];
+
+        this.playerDefaultRight = new Image();
+        this.playerDefaultRight.src = "img/player_sprite/Fokker_default_right.png";
+        this.playerUpRight = new Image();
+        this.playerUpRight.src = "img/player_sprite/Fokker_up_right.png";
+        this.playerDownRight = new Image();
+        this.playerDownRight.src = "img/player_sprite/Fokker_down_right.png";
+
+        this.image = this.playerDefaultRight;
+        this.imageChangeinProgress = false;
     }
 
     move() {
@@ -62,12 +77,41 @@ class Plane extends GameObject {
             result += FULL_ANGLE;
 
         this.rotation = result;
+
+        if (this.imageChangeinProgress)
+            return;
+
+        this.imageChangeinProgress = true;
+
+        if (this.rotation <= 90 || this.rotation >= 270) {
+
+            if (direction == CLOCKWISE)
+                setTimeout(() => {
+                    this.image = (this.image == this.playerUpRight ?
+                                        this.playerDefaultRight
+                                        : this.playerDownRight);
+                    this.imageChangeinProgress = false;
+                }, 100);
+                
+
+            if (direction == COUNTER_CLOCKWISE)
+                setTimeout(() => {
+                    this.image = (this.image == this.playerDownRight ?
+                                        this.playerDefaultRight
+                                        : this.playerUpRight);
+                    this.imageChangeinProgress = false;
+                }, 100);
+        }
+
+        
     }
 
     changeDirection(direction) {
+        this.direction = direction;
+
         switch (direction) {
             case LEFT:
-                if (this.rotation == 180)
+                if (this.rotation == 180 || this.rotation == 0)
                     return;
 
                 if (this.rotation > 0
@@ -80,7 +124,7 @@ class Plane extends GameObject {
 
                 return;
             case UP:
-                 if (this.rotation == 90)
+                 if (this.rotation == 90 || this.rotation == 270)
                     return;
 
                 if (this.rotation < 90
@@ -93,7 +137,7 @@ class Plane extends GameObject {
 
                 return;
             case RIGHT:
-                if (this.rotation == 0)
+                if (this.rotation == 0 || this.rotation == 180)
                     return;
 
                 if (this.rotation < 180)
@@ -104,7 +148,7 @@ class Plane extends GameObject {
 
                 return;
             case DOWN:
-                if (this.rotation == 270)
+                if (this.rotation == 270 || this.rotation == 90)
                     return;
 
                 if (this.rotation > 270
@@ -120,17 +164,24 @@ class Plane extends GameObject {
     }
 
     updateState() {
+        if (!isPlaying)
+            return;
+            
+        this.changeDirection(this.direction);
         this.move();
     }
 
     render() {
+        if (!isPlaying)
+            return;
+
         ctx.save();
         ctx.translate(this.positionX, this.positionY);
         ctx.rotate(Math.radians(-this.rotation));
         ctx.translate(-this.positionX, -this.positionY);
 
-        ctx.fillStyle = "black";
-        ctx.fillRect(this.positionX - this.width / 2, this.positionY - this.height / 2,
+
+        ctx.drawImage(this.image, this.positionX - this.width / 2, this.positionY - this.height / 2,
                         this.width, this.height);
 
         ctx.restore();
@@ -157,6 +208,12 @@ class Plane extends GameObject {
         setTimeout(() => {
             this.isReloading = false;
         }, this.reloadTime * 1000);
+    }
+
+    changeSpeed(multiplier) {
+        let speedRange = this.maxSpeed - this.minSpeed;
+
+        this.speed = this.minSpeed + speedRange * multiplier;
     }
 
     pointIsInsideBoundingRectangle(pointX, pointY) {

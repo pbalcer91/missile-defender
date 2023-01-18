@@ -9,4 +9,6 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <preference name="loglevel" value="DEBUG" />
+    <preference name="orientation" value="landscape" />
+    <preference name="Fullscreen" value="true" />
 </widget>

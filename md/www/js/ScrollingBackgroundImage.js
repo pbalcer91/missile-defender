@@ -6,7 +6,7 @@ class ScrollingBackgroundImage extends GameObject {
         this.positionX = x;
         this.positionY = y;
         this.height = height;
-        this.speed = 1;
+        this.speed = 0.5;
     }
 
     updateState() {   

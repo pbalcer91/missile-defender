@@ -1,29 +1,51 @@
-const STATIC_TEXT_CENTRE = -1;
+const ALIGN_CENTER = 0;
+const ALIGN_LEFT = 1;
+const ALIGN_RIGHT = 2;
 
 class StaticText extends GameObject {
-    constructor(text, x, y, font, fontSize, colour) {
+    constructor(text, x, y, fontSize, color, alignment = ALIGN_LEFT) {
         super(null); 
 
         this.text = text;
         this.x = x;
         this.y = y;
-        this.font = font;
+        this.font = "Arial";
         this.fontSize = fontSize;
-        this.colour = colour;
+        this.color = color;
 
-        ctx.font = this.fontSize + "px " + this.font;
-        this.width = ctx.measureText(this.text).width;
+        this.visible = true;
 
-        if (this.x === STATIC_TEXT_CENTRE)
-            this.x = (canvas.width - this.width) / 2;
+        this.alignment = alignment;
     }
 
     changeText(text) {
         this.text = text;
     }
 
-    render() {
-        ctx.fillStyle = this.colour;
-        ctx.fillText(this.text, this.x, this.y);
+    render() {   
+        if (!this.visible)
+            return;
+
+        ctx.font = this.fontSize + "px " + this.font;    
+        this.width = ctx.measureText(this.text).width; 
+
+        ctx.fillStyle = this.color;
+        ctx.textBaseline = "middle";
+
+        let positionX;
+
+        switch(this.alignment) {
+            case ALIGN_CENTER:
+                positionX = this.x - this.width / 2;
+                break;
+            case ALIGN_LEFT:
+                positionX = this.x;
+                break;
+            case ALIGN_RIGHT:
+                positionX = this.x - this.width;
+                break;
+        }
+
+        ctx.fillText(this.text, positionX, this.y);
     }
 }

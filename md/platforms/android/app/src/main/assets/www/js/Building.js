@@ -1,5 +1,5 @@
-const BIG_BUILDING = [200, 60];
-const MEDIUM_BUILDING = [150, 60];
+const BIG_BUILDING = [120, 40];
+const MEDIUM_BUILDING = [60, 40];
 const SMALL_BUILDING = [30, 40];
 const NO_BUILDING = [0, 0];
 
@@ -16,7 +16,7 @@ class Building extends GameObject {
     }
 
     updateState() {
-        this.positionX--;
+        this.positionX -= 0.5;
 
         if (this.positionX < 0 - this.width)
             buildings = arrayRemove(buildings, this);

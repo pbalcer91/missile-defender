@@ -181,6 +181,9 @@ class Enemy extends Plane {
     }
 
     updateState() {
+        if (!isPlaying)
+            return;
+
         if (this.direction == DIRECTION_OK
             && !this.otherEnemyOnShootingLine()
             && this.isInRange(player, this.range)) {
