@@ -1,5 +1,5 @@
-class MessageDialog extends GameObject {
-    constructor(points) {
+class HighScoreDialog extends GameObject {
+    constructor() {
         super();
 
         this.height = canvas.height * 0.6;
@@ -13,18 +13,9 @@ class MessageDialog extends GameObject {
                             logoWidth,
                             logoHeight);
 
-        this.label = "SCORE";
+        this.label = new StaticText("YOUR HIGHSCORE", this.positionX, this.positionY - this.height * 0.25, 24, "#f5d105", ALIGN_CENTER);
+        this.pointsLabel = new StaticText(highestScore, this.positionX, this.positionY - this.height / 8, 36, "#000000", ALIGN_CENTER);
 
-        if (points > highestScore && points > 0) {
-            this.label = "NEW HIGH SCORE!";
-            setHighScore(points);
-        }
-
-        this.label = new StaticText(this.label, this.positionX, this.positionY - this.height * 0.25, 24, "#f5d105", ALIGN_CENTER);
-        this.pointsLabel = new StaticText(points, this.positionX, this.positionY - this.height / 8, 36, "#000000", ALIGN_CENTER);
-
-        this.retryButton = new Button(this.positionY + this.height / 2 - 40, "RETRY",
-                                "#f5d105", "#f5d105", "#7d1313", "#000000");
         this.menuButton = new Button(this.positionY + this.height / 2 - 100, "MENU",
                                 "#f5d105", "#f5d105", "#7d1313", "#000000");
 
@@ -35,10 +26,6 @@ class MessageDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.retryButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.retryButton.isClicked = true;
-                return;
-            }
             if (this.menuButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
                 this.menuButton.isClicked = true;
                 return;
@@ -52,11 +39,6 @@ class MessageDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.retryButton.isClicked
-                && !this.retryButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.retryButton.isClicked = false;
-                return;
-            }
             if (this.menuButton.isClicked
                 && !this.scoreButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
                 this.menuButton.isClicked = false;
@@ -68,11 +50,6 @@ class MessageDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.retryButton.isClicked) {
-                this.retryButton.isClicked = false;
-                startGame(game, player);
-                return;
-            }
             if (this.menuButton.isClicked) {
                 this.menuButton.isClicked = false;
                 showMenu();
@@ -94,7 +71,6 @@ class MessageDialog extends GameObject {
         this.logo.render();
         this.label.render();
         this.pointsLabel.render();
-        this.retryButton.render();
         this.menuButton.render();
     }
 

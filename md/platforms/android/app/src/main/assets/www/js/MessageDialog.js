@@ -13,7 +13,14 @@ class MessageDialog extends GameObject {
                             logoWidth,
                             logoHeight);
 
-        this.label = new StaticText("SCORE", this.positionX, this.positionY - this.height * 0.25, 24, "#f5d105", ALIGN_CENTER);
+        this.label = "SCORE";
+
+        if (points > highestScore && points > 0) {
+            this.label = "NEW HIGH SCORE!";
+            setHighScore(points);
+        }
+
+        this.label = new StaticText(this.label, this.positionX, this.positionY - this.height * 0.25, 24, "#f5d105", ALIGN_CENTER);
         this.pointsLabel = new StaticText(points, this.positionX, this.positionY - this.height / 8, 36, "#000000", ALIGN_CENTER);
 
         this.retryButton = new Button(this.positionY + this.height / 2 - 40, "RETRY",

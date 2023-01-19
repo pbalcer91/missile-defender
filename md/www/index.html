@@ -26,6 +26,7 @@
         <script src="js/Menu.js" type="text/javascript"></script>
         <script src="js/Bonus.js" type="text/javascript"></script>
         <script src="js/MessageDialog.js" type="text/javascript"></script>
+        <script src="js/HighScoreDialog.js" type="text/javascript"></script>
         <script src="js/InfoPanel.js" type="text/javascript"></script>
         <script src="js/Button.js" type="text/javascript"></script>
         <script src="js/Cloud.js" type="text/javascript"></script>
@@ -37,5 +38,50 @@
     <body>
         <div id="gameContainer">
         <canvas id="gameCanvas" tabindex="1"></canvas>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+            import { getDatabase, set, get, update, ref, child} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyB_jFOz0-47KWKtWNpzXb-E6qUCS-VDhmI",
+                authDomain: "missile-defender-2b952.firebaseapp.com",
+                databaseURL: "https://missile-defender-2b952-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId: "missile-defender-2b952",
+                storageBucket: "missile-defender-2b952.appspot.com",
+                messagingSenderId: "448704114242",
+                appId: "1:448704114242:web:3fceeb236454c9bdb707db",
+                measurementId: "G-WFPQ3ETQZL"
+            };
+
+            firebase = initializeApp(firebaseConfig);
+            database = getDatabase();
+
+            setHighScore = (value) => {
+                set(ref(database, deviceId), {
+                    "highScore": value
+                }).then(() => {
+                    console.log("Data added to database")
+                }).catch((error) => {
+                    console.warn(error);
+                })
+            }
+
+            getHighScore = () => {
+                const databaseRef = ref(database);
+                get(child(databaseRef, deviceId + "/highScore"))
+                    .then((snapshot => {
+                        if (snapshot.exists()) {
+                            highestScore = snapshot.val();
+                        }
+                        else {
+                            console.warn("No data in database");
+                        }
+                    })).catch((error) => {
+                        console.warn(error);
+                    })
+            }
+
+        </script>
     </body>
 </html>

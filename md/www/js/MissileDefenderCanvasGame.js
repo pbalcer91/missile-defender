@@ -69,6 +69,9 @@ class MissileDefenderCanvasGame extends CanvasGame {
         if (menu != null)
             menu.render();
 
+        if (highScoreDialog != null)
+            highScoreDialog.render();
+
         if (infoPanel != null)
             infoPanel.render();
 
@@ -150,9 +153,13 @@ class MissileDefenderCanvasGame extends CanvasGame {
                     if (enemy.collisionWithObject(missile)) {
                         enemy.isDestroyed = true;
 
-                        if (!enemy.isDestroyed) {
-                            bonuses.push(new Bonus(enemy.positionX, enemy.positionY));
-                            bonuses.at(-1).start();
+                        if (enemy.isDestroyed) {
+
+                            if (Math.random() > 0.5) {
+                                bonuses.push(new Bonus(enemy.positionX, enemy.positionY));
+                                bonuses.at(-1).start();
+                            }
+                            
                             this.score++;
                             infoPanel.addScore(1);
                         }

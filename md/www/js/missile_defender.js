@@ -12,6 +12,7 @@ const BACKGROUND_CITY = 8;
 
 let game;
 let menu;
+let highScoreDialog;
 let messageDialog;
 let infoPanel;
 let speedSlider;
@@ -21,7 +22,7 @@ let enemies = [];
 let buildings = [];
 let bonuses = [];
 
-let numberOfEnemies = 1;
+let numberOfEnemies = 2;
 
 let logoWidth;
 let logoHeight;
@@ -171,9 +172,16 @@ function gameOver() {
     messageDialog = new MessageDialog(game.score);
 }
 
+function showHighScore() {
+    menu = null;
+    highScoreDialog = new HighScoreDialog();
+}
+
 function showMenu() {
+    getHighScore();
     isPlaying = false;
     messageDialog = null;
+    highScoreDialog = null;
 
     clearGameBoardObjects();
 

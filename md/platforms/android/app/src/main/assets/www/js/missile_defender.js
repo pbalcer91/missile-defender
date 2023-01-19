@@ -2,7 +2,7 @@ let backgroundRefreshRate = 20;
 
 let isPlaying = false;
 
-const VERSION = "0.2.0";
+const VERSION = "1.0.0";
 
 const GROUND_HEIGHT = 10;
 
@@ -12,6 +12,7 @@ const BACKGROUND_CITY = 8;
 
 let game;
 let menu;
+let highScoreDialog;
 let messageDialog;
 let infoPanel;
 let speedSlider;
@@ -96,6 +97,16 @@ hitSound.volume = 0.6;
 hitSound.loop = false;
 hitSound.src = 'audio/hitSound.mp3';
 
+let explosionSound = document.createElement('audio');
+explosionSound.volume = 0.6;
+explosionSound.loop = false;
+explosionSound.src = 'audio/explosionSound.mp3';
+
+let healingSound = document.createElement('audio');
+healingSound.volume = 0.6;
+healingSound.loop = false;
+healingSound.src = 'audio/healingSound.mp3';
+
 //--------------PLAYER SPRITES
 playerDefaultRight = new Image();
 playerDefaultRight.src = "img/player_sprite/Fokker_default_right.png";
@@ -138,6 +149,7 @@ function clearGameBoardObjects() {
 
 function gameOver() {
     planeSound.pause();
+    explosionSound.play();
     window.navigator.vibrate(1000);
     isPlaying = false;
 
@@ -160,9 +172,16 @@ function gameOver() {
     messageDialog = new MessageDialog(game.score);
 }
 
+function showHighScore() {
+    menu = null;
+    highScoreDialog = new HighScoreDialog();
+}
+
 function showMenu() {
+    getHighScore();
     isPlaying = false;
     messageDialog = null;
+    highScoreDialog = null;
 
     clearGameBoardObjects();
 

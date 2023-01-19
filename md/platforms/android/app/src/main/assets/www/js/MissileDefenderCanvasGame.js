@@ -69,6 +69,9 @@ class MissileDefenderCanvasGame extends CanvasGame {
         if (menu != null)
             menu.render();
 
+        if (highScoreDialog != null)
+            highScoreDialog.render();
+
         if (infoPanel != null)
             infoPanel.render();
 
@@ -94,6 +97,7 @@ class MissileDefenderCanvasGame extends CanvasGame {
             if (player != null && player.collisionWithObject(bonus)) {
                 bonuses = arrayRemove(bonuses, bonus);
                 if (player.hitPoints < 5) {
+                    healingSound.play();
                     player.hitPoints++;
                     infoPanel.recoverHealth();
                 }
@@ -108,6 +112,7 @@ class MissileDefenderCanvasGame extends CanvasGame {
             enemies.forEach(otherEnemy => {
                 if (enemy.collisionWithObject(otherEnemy)
                     && enemy != otherEnemy) {
+                    explosionSound.play();
                     enemy.stop();
                     otherEnemy.stop();
                     enemies = arrayRemove(enemies, enemy);
@@ -119,6 +124,7 @@ class MissileDefenderCanvasGame extends CanvasGame {
             })
 
             if (player != null && player.collisionWithObject(enemy)) {
+                explosionSound.play();
                 enemy.stop();
                 enemies = arrayRemove(enemies, enemy);
 
@@ -136,6 +142,7 @@ class MissileDefenderCanvasGame extends CanvasGame {
 
             buildings.forEach(building => {
                 if (enemy.collisionWithObject(building)) {
+                    explosionSound.play();
                     enemy.stop();
                     enemies = arrayRemove(enemies, enemy);
                 }
@@ -144,22 +151,32 @@ class MissileDefenderCanvasGame extends CanvasGame {
             if (player != null) {
                 player.missiles.forEach(missile => {
                     if (enemy.collisionWithObject(missile)) {
-                        bonuses.push(new Bonus(enemy.positionX, enemy.positionY));
-                        bonuses.at(-1).start();
+                        enemy.isDestroyed = true;
+
+                        if (enemy.isDestroyed) {
+
+                            if (Math.random() > 0.5) {
+                                bonuses.push(new Bonus(enemy.positionX, enemy.positionY));
+                                bonuses.at(-1).start();
+                            }
+                            
+                            this.score++;
+                            infoPanel.addScore(1);
+                        }
+
+                        explosionSound.play();
+                        
                         enemy.stop();
                         enemies = arrayRemove(enemies, enemy);
                         missile.stop();
                         player.missiles = arrayRemove(player.missiles, missile);
-                        this.score++;
-                        infoPanel.addScore(1);
-                        
                     }
                 })
             }
 
             enemy.missiles.forEach(missile => {
                 if (player != null && player.collisionWithObject(missile)) {
-                    //hitSound.play();
+                    hitSound.play();
                     missile.stop();
                     enemy.missiles = arrayRemove(enemy.missiles, missile);
 

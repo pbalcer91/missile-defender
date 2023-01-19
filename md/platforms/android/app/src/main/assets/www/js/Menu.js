@@ -79,6 +79,7 @@ class Menu extends GameObject {
             }
             if (this.scoreButton.isClicked) {
                 this.scoreButton.isClicked = false;
+                showHighScore();
                 return;
             }
             // if (this.quitButton.isClicked) {

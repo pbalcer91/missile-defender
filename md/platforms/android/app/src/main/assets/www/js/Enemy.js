@@ -24,6 +24,8 @@ class Enemy extends Plane {
         this.reloadTime = 3;
         this.seriesCount = 2;
 
+        this.destroyed = false;
+
         this.targetLockRadius = 4;
 
         this.direction = -1;
