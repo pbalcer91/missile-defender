@@ -30,11 +30,13 @@ class Menu extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.startButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            if (this.startButton.pointIsInsideBoundingRectangle(clientX, clientY)
+                && menuVisible) {
                 this.startButton.isClicked = true;
                 return;
             }
-            if (this.scoreButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            if (this.scoreButton.pointIsInsideBoundingRectangle(clientX, clientY)
+                && menuVisible) {
                 this.scoreButton.isClicked = true;
                 return;
             }

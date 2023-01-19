@@ -2,13 +2,17 @@ let backgroundRefreshRate = 20;
 
 let isPlaying = false;
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 
 const GROUND_HEIGHT = 10;
 
 const BACKGROUND_SKY = 0;
 const BACKGROUND_GROUND = 1;
 const BACKGROUND_CITY = 8;
+
+let menuVisible = false;
+let endGameDialogVisible = false;
+let highScoreDialogVisible = false;
 
 let game;
 let menu;
@@ -22,7 +26,7 @@ let enemies = [];
 let buildings = [];
 let bonuses = [];
 
-let numberOfEnemies = 1;
+let numberOfEnemies = 2;
 
 let logoWidth;
 let logoHeight;
@@ -148,6 +152,9 @@ function clearGameBoardObjects() {
 }
 
 function gameOver() {
+    menuVisible = false;
+    highScoreDialogVisible = false;
+    endGameDialogVisible = true;
     planeSound.pause();
     explosionSound.play();
     window.navigator.vibrate(1000);
@@ -174,10 +181,17 @@ function gameOver() {
 
 function showHighScore() {
     menu = null;
+    menuVisible = false;
+    endGameDialogVisible = false;
+
+    highScoreDialogVisible = true;
     highScoreDialog = new HighScoreDialog();
 }
 
 function showMenu() {
+    menuVisible = true;
+    endGameDialogVisible = false;
+    highScoreDialogVisible = false;
     getHighScore();
     isPlaying = false;
     messageDialog = null;
@@ -198,6 +212,7 @@ function startGame(game) {
     game.score = 0;
 
     menu = null;
+    highScoreDialog = null;
     messageDialog = null;
         
     fireButton = new FireButton();

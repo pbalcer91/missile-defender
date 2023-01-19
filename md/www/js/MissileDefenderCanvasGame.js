@@ -8,18 +8,10 @@ class MissileDefenderCanvasGame extends CanvasGame {
     }
 
     createEnemy(timeout) {          
-        setTimeout(() => {
-            if (!isPlaying)
-                return;
-
-            if (enemies.length >= this.numberOfEnemies) {
-                this.createEnemy(timeout);
-            }
-            else {
+        setInterval(() => {
+            if (isPlaying && enemies.length < this.numberOfEnemies) {
                 enemies.push(new Enemy());
                 enemies.at(-1).start();
-
-                this.createEnemy(timeout);
             }
         }, timeout);
     }
@@ -40,8 +32,6 @@ class MissileDefenderCanvasGame extends CanvasGame {
                 buildings.push(new Building(backgroundRefreshRate));
                 buildings.at(-1).start();
             }
-
-            this.createBuilding(timeout);
         }, timeout)
     }
 

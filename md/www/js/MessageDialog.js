@@ -24,9 +24,9 @@ class MessageDialog extends GameObject {
         this.pointsLabel = new StaticText(points, this.positionX, this.positionY - this.height / 8, 36, "#000000", ALIGN_CENTER);
 
         this.retryButton = new Button(this.positionY + this.height / 2 - 40, "RETRY",
-                                "#f5d105", "#f5d105", "#7d1313", "#000000");
+                                "#f5d105", "#d5b100", "#7d1313", "#000000");
         this.menuButton = new Button(this.positionY + this.height / 2 - 100, "MENU",
-                                "#f5d105", "#f5d105", "#7d1313", "#000000");
+                                "#f5d105", "#d5b100", "#7d1313", "#000000");
 
         window.addEventListener("touchstart", (event) => {
             let clientX = event.touches[0].clientX;
@@ -35,11 +35,13 @@ class MessageDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.retryButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            if (this.retryButton.pointIsInsideBoundingRectangle(clientX, clientY)
+                && endGameDialogVisible) {
                 this.retryButton.isClicked = true;
                 return;
             }
-            if (this.menuButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+            if (this.menuButton.pointIsInsideBoundingRectangle(clientX, clientY)
+                && endGameDialogVisible) {
                 this.menuButton.isClicked = true;
                 return;
             }
@@ -58,7 +60,7 @@ class MessageDialog extends GameObject {
                 return;
             }
             if (this.menuButton.isClicked
-                && !this.scoreButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+                && !this.menuButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
                 this.menuButton.isClicked = false;
                 return;
             }

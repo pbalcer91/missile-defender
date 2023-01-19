@@ -16,8 +16,8 @@ class HighScoreDialog extends GameObject {
         this.label = new StaticText("YOUR HIGHSCORE", this.positionX, this.positionY - this.height * 0.25, 24, "#f5d105", ALIGN_CENTER);
         this.pointsLabel = new StaticText(highestScore, this.positionX, this.positionY - this.height / 8, 36, "#000000", ALIGN_CENTER);
 
-        this.menuButton = new Button(this.positionY + this.height / 2 - 100, "MENU",
-                                "#f5d105", "#f5d105", "#7d1313", "#000000");
+        this.backButton = new Button(this.positionY + this.height / 2 - 100, "BACK",
+                                "#f5d105", "#d5b100", "#7d1313", "#000000");
 
         window.addEventListener("touchstart", (event) => {
             let clientX = event.touches[0].clientX;
@@ -26,8 +26,9 @@ class HighScoreDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.menuButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.menuButton.isClicked = true;
+            if (this.backButton.pointIsInsideBoundingRectangle(clientX, clientY)
+                && highScoreDialogVisible) {
+                this.backButton.isClicked = true;
                 return;
             }
         });
@@ -39,9 +40,9 @@ class HighScoreDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.menuButton.isClicked
-                && !this.scoreButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
-                this.menuButton.isClicked = false;
+            if (this.backButton.isClicked
+                && !this.backButton.pointIsInsideBoundingRectangle(clientX, clientY)) {
+                this.backButton.isClicked = false;
                 return;
             }
         });
@@ -50,8 +51,8 @@ class HighScoreDialog extends GameObject {
             if (isPlaying)
                 return;
 
-            if (this.menuButton.isClicked) {
-                this.menuButton.isClicked = false;
+            if (this.backButton.isClicked) {
+                this.backButton.isClicked = false;
                 showMenu();
                 return;
             }
@@ -71,7 +72,7 @@ class HighScoreDialog extends GameObject {
         this.logo.render();
         this.label.render();
         this.pointsLabel.render();
-        this.menuButton.render();
+        this.backButton.render();
     }
 
 }
